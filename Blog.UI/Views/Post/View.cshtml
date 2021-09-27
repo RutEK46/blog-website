@@ -1,0 +1,31 @@
+﻿@model Blog.UI.Models.Posts.PostViewModel
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<h1>View</h1>
+
+<div>
+    <h4>PostViewModel</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Body)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Body)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Delete" asp-route-id="@Model.Title">Edit</a> |
+    <a asp-action="Delete" asp-route-title="@Model.Title">Delete</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

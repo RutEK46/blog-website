@@ -1,4 +1,6 @@
-﻿using Blog.UI.Models;
+﻿using Blog.DataLibrary.BusinessLogic;
+using Blog.UI.Models;
+using Blog.UI.Models.Posts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,15 +14,28 @@ namespace Blog.UI.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IPostProcessor _postProcessor;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(
+            ILogger<HomeController> logger,
+            IPostProcessor postProcessor
+            )
         {
             _logger = logger;
+            _postProcessor = postProcessor;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var model = (await _postProcessor.Load())
+                .Select(x => new PostViewModel
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Body = x.Body
+                }).ToList();
+            
+            return View(model);
         }
 
         public IActionResult Privacy()

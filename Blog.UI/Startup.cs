@@ -1,3 +1,5 @@
+using Blog.DataLibrary.BusinessLogic;
+using Blog.DataLibrary.DataAccess;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -24,6 +26,9 @@ namespace Blog.UI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddTransient<ISqlDataAccess, SqlDataAccess>();
+            services.AddTransient<IPostProcessor, PostProcessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
