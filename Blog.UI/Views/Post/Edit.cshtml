@@ -1,4 +1,4 @@
-﻿@model Blog.UI.Models.Posts.PostViewModel
+﻿@model Blog.UI.Models.Post.EditViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -34,10 +34,20 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Delete" asp-route-id="@Model.Title">Delete</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+@if (User.IsInRole("Admin"))
+{
+    <div>
+        <a asp-action="Delete" asp-route-title="@Model.Title">Delete</a> |
+        <a asp-controller="Home" asp-action="Index">Back to List</a>
+    </div>
+}
+else
+{
+    <div>
+        <a asp-controller="Home" asp-action="Index">Back to List</a>
+    </div>
+}
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

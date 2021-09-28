@@ -1,6 +1,5 @@
 ﻿using Blog.DataLibrary.BusinessLogic;
 using Blog.UI.Models;
-using Blog.UI.Models.Posts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -18,8 +17,7 @@ namespace Blog.UI.Controllers
 
         public HomeController(
             ILogger<HomeController> logger,
-            IPostProcessor postProcessor
-            )
+            IPostProcessor postProcessor)
         {
             _logger = logger;
             _postProcessor = postProcessor;
@@ -27,13 +25,7 @@ namespace Blog.UI.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var model = (await _postProcessor.Load())
-                .Select(x => new PostViewModel
-                {
-                    Id = x.Id,
-                    Title = x.Title,
-                    Body = x.Body
-                }).ToList();
+            var model = (await _postProcessor.LoadBlogItems()).ToList();
             
             return View(model);
         }

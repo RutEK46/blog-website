@@ -1,10 +1,11 @@
 ﻿using Blog.DataLibrary.DataAccess;
-using Blog.DataLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Blog.DataLibrary.Models.BlogItem.Post;
+using Blog.DataLibrary.Models.BlogItem;
 
 namespace Blog.DataLibrary.BusinessLogic
 {
@@ -29,15 +30,15 @@ namespace Blog.DataLibrary.BusinessLogic
             string sql = @"insert into dbo.Post (Title, Body)
                             values (@Title, @Body);";
 
-            return await _sqlDataAccess.SaveDataAsync(sql, data);
+            return await _sqlDataAccess.SaveData(sql, data);
         }
 
-        public async Task<IEnumerable<IPostModel>> Load()
+        public async Task<IEnumerable<IBlogItem>> LoadBlogItems()
         {
-            string sql = @"select Id, Title, Body
+            string sql = @"select Id, Title
                             from dbo.Post;";
 
-            return await _sqlDataAccess.LoadDataAsync<PostModel>(sql);
+            return await _sqlDataAccess.LoadData<PostModel>(sql);
         }
 
         public async Task<IPostModel> Load(int id)
@@ -46,7 +47,7 @@ namespace Blog.DataLibrary.BusinessLogic
                             from dbo.Post
                             where Id = @Id;";
 
-            var result = await _sqlDataAccess.LoadDataAsync<PostModel>(sql, new { Id = id });
+            var result = await _sqlDataAccess.LoadData<PostModel>(sql, new { Id = id });
             return result.FirstOrDefault();
         }
 
@@ -56,7 +57,7 @@ namespace Blog.DataLibrary.BusinessLogic
                             from dbo.Post
                             where Title = @Title;";
 
-            var result = await _sqlDataAccess.LoadDataAsync<PostModel>(sql, new { Title = title });
+            var result = await _sqlDataAccess.LoadData<PostModel>(sql, new { Title = title });
             return result.FirstOrDefault();
         }
 
@@ -73,7 +74,7 @@ namespace Blog.DataLibrary.BusinessLogic
                             set Title = @Title, Body = @Body
                             where Id = @Id;";
 
-            return await _sqlDataAccess.SaveDataAsync(sql, data);
+            return await _sqlDataAccess.SaveData(sql, data);
         }
 
         public async Task<int> Delete(int id)
@@ -82,7 +83,7 @@ namespace Blog.DataLibrary.BusinessLogic
                             from dbo.Post
                             where Id = @Id;";
 
-            return await _sqlDataAccess.SaveDataAsync(sql, new { Id = id });
+            return await _sqlDataAccess.SaveData(sql, new { Id = id });
         }
     }
 }

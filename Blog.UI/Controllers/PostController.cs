@@ -1,5 +1,6 @@
 ﻿using Blog.DataLibrary.BusinessLogic;
-using Blog.UI.Models.Posts;
+using Blog.UI.Models.Post;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Blog.UI.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class PostController : Controller
     {
         private IPostProcessor _postProcessor;
@@ -17,9 +19,24 @@ namespace Blog.UI.Controllers
             _postProcessor = postProcessor;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("[controller]/Index/{title}")]
+        public async Task<IActionResult> Index(string title)
         {
-            return RedirectToAction("Index", "Home");
+            var post = await _postProcessor.Load(title);
+
+            if (post is null)
+            {
+                RedirectToAction("Index", "Home");
+            }
+
+            return View(new IndexViewModel
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Body = post.Body
+            });
         }
 
         [HttpGet]
@@ -29,7 +46,7 @@ namespace Blog.UI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(PostViewModel vm)
+        public async Task<IActionResult> Create(CreateViewModel vm)
         {
             if (ModelState.IsValid)
             {
@@ -41,25 +58,7 @@ namespace Blog.UI.Controllers
         }
 
         [HttpGet]
-        [Route("[controller]/View/{title}")]
-        public async Task<IActionResult> GetView(string title)
-        {
-            var post = await _postProcessor.Load(title);
-            
-            if (post is null)
-            {
-                RedirectToAction("Index", "Home");
-            }
-
-            return View("View", new PostViewModel
-            {
-                Id = post.Id,
-                Title = post.Title,
-                Body = post.Body
-            });
-        }
-
-        [HttpGet]
+        [Route("[controller]/Edit/{title}")]
         public async Task<IActionResult> Edit(string title)
         {
             var post = await _postProcessor.Load(title);
@@ -69,7 +68,7 @@ namespace Blog.UI.Controllers
                 RedirectToAction("Index", "Home");
             }
 
-            return View(new PostViewModel
+            return View(new EditViewModel
             {
                 Id = post.Id,
                 Title = post.Title,
@@ -78,7 +77,7 @@ namespace Blog.UI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(PostViewModel vm)
+        public async Task<IActionResult> Edit(EditViewModel vm)
         {
             var post = await _postProcessor.Load(vm.Id);
 
@@ -93,9 +92,11 @@ namespace Blog.UI.Controllers
                 vm.Body
                 );
 
-            return RedirectToAction("View", new { id = vm.Title });
+            return RedirectToAction("Index", new { id = vm.Title });
         }
 
+        [HttpGet]
+        [Route("[controller]/Delete/{title}")]
         public async Task<IActionResult> Delete(string title)
         {
             var post = await _postProcessor.Load(title);

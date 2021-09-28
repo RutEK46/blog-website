@@ -1,4 +1,4 @@
-﻿@model List<Blog.UI.Models.Posts.PostViewModel> 
+﻿@model List<Blog.DataLibrary.Models.BlogItem.IBlogItem>
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -10,7 +10,7 @@
     {
         <dl class="row">
             <dt class="col-sm-2">
-                <a asp-controller="Post" asp-action="View" asp-route-id="@Model[i].Title">@Html.DisplayFor(model => model[i].Title)</a>
+                <a asp-controller="Post" asp-action="Index" asp-route-id="@Model[i].Title">@Html.DisplayFor(model => model[i].Title)</a>
             </dt>
         </dl>
     }

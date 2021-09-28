@@ -1,0 +1,26 @@
+﻿@model Blog.UI.Models.Post.IndexViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<h1>@Html.DisplayFor(model => model.Title)</h1>
+
+<div>
+    @Html.DisplayFor(model => model.Body)
+</div>
+
+@if (User.IsInRole("Admin"))
+{
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Title">Edit</a> |
+        <a asp-action="Delete" asp-route-title="@Model.Title">Delete</a> |
+        <a asp-controller="Home" asp-action="Index">Back to List</a>
+    </div>
+}
+else
+{
+    <div>
+        <a asp-controller="Home" asp-action="Index">Back to List</a>
+    </div>
+}

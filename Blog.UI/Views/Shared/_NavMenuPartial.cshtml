@@ -1,0 +1,53 @@
+﻿@model Blog.UI.Models.Account.LoginViewModel  
+
+@{ 
+
+}
+
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Blog.UI</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout" asp-route-redirectUrl="@ViewContext.HttpContext.Request.Path">Logout</a>
+                }
+                else
+                {
+                    <form asp-controller="Account" asp-action="Login" asp-route-redirectUrl="@ViewContext.HttpContext.Request.Path">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <input asp-for="Email" />
+                            </li>
+                            <li class="nav-item">
+                                <input asp-for="Password" />
+                            </li>
+                            <li class="nav-item">
+                                <button type="submit">Login</button>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Create">Register</a>
+                            </li>
+                        </ul>
+                    </form>
+                }
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Post" asp-action="Create">Create Post</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

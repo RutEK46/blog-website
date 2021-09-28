@@ -1,5 +1,6 @@
 using Blog.DataLibrary.BusinessLogic;
 using Blog.DataLibrary.DataAccess;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -25,10 +26,25 @@ namespace Blog.UI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication("CookieAuth")
+                .AddCookie("CookieAuth");
+
+            services.AddAuthorization(config =>
+            {
+                /*var defaultAuthBuilder = new AuthorizationPolicyBuilder();
+                var defaultAuthPolicy = defaultAuthBuilder
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                config.DefaultPolicy = defaultAuthPolicy;*/
+            });
+
             services.AddControllersWithViews();
 
             services.AddTransient<ISqlDataAccess, SqlDataAccess>();
+            services.AddTransient<IPasswordHasher, PasswordHasher>();
             services.AddTransient<IPostProcessor, PostProcessor>();
+            services.AddTransient<IAccountProcessor, AccountProcessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +65,7 @@ namespace Blog.UI
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -24,15 +24,7 @@ namespace Blog.DataLibrary.DataAccess
             return _config.GetConnectionString(connectionName);
         }
 
-        public IEnumerable<T> LoadData<T>(string sql, object param = null)
-        {
-            using (IDbConnection cnn = new SqlConnection(GetConnectionString()))
-            {
-                return cnn.Query<T>(sql, param);
-            }
-        }
-
-        public async Task<IEnumerable<T>> LoadDataAsync<T>(string sql, object param = null)
+        public async Task<IEnumerable<T>> LoadData<T>(string sql, object param = null)
         {
             using (IDbConnection cnn = new SqlConnection(GetConnectionString()))
             {
@@ -40,15 +32,7 @@ namespace Blog.DataLibrary.DataAccess
             }
         }
 
-        public int SaveData<T>(string sql, T data)
-        {
-            using (IDbConnection cnn = new SqlConnection(GetConnectionString()))
-            {
-                return cnn.Execute(sql, data);
-            }
-        }
-
-        public async Task<int> SaveDataAsync<T>(string sql, T data)
+        public async Task<int> SaveData<T>(string sql, T data)
         {
             using (IDbConnection cnn = new SqlConnection(GetConnectionString()))
             {

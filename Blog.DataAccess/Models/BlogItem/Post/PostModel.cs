@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Blog.DataLibrary.Models
+namespace Blog.DataLibrary.Models.BlogItem.Post
 {
     public class PostModel : IPostModel
     {
