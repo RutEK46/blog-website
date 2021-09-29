@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Blog.DataLibrary.BusinessLogic
+namespace Blog.DataLibrary.BusinessLogic.Processors
 {
     public class AccountProcessor : IAccountProcessor
     {
@@ -20,13 +20,13 @@ namespace Blog.DataLibrary.BusinessLogic
         }
 
         public async Task<int> Create(
-            string userName, 
-            string email, 
-            string salt, 
+            string userName,
+            string email,
+            string salt,
             string passwordHash)
             => await _sqlDataAccess.SaveData(
-                "spUser_Insert @UserName, @Email, @Salt, @PasswordHash", 
-                new User
+                "spUser_Insert @UserName, @Email, @Salt, @PasswordHash",
+                new AuthenticableUser
                 {
                     UserName = userName,
                     Email = email,
@@ -34,11 +34,11 @@ namespace Blog.DataLibrary.BusinessLogic
                     PasswordHash = passwordHash
                 });
 
-        public async Task<User> LoadByEmail(string email)
-            => (await _sqlDataAccess
-                .LoadData<User>("spUser_LoadByEmail @Email", new 
+        public async Task<IAuthenticableUser> Load(string email)
+            => (await _sqlDataAccess.LoadData<AuthenticableUser>(
+                "spUser_SelectByEmail @Email", new
                 {
-                    Email = email 
+                    Email = email
                 }))
                 .FirstOrDefault();
 
@@ -66,20 +66,5 @@ namespace Blog.DataLibrary.BusinessLogic
         {
 
         }*/
-
-        public byte[] Hash(string password, byte[] salt)
-        {
-            using (var rngCsp = new RNGCryptoServiceProvider())
-            {
-                rngCsp.GetNonZeroBytes(salt);
-            }
-
-            return KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 100000,
-                numBytesRequested: 256 / 8);
-        }
     }
 }

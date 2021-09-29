@@ -11,6 +11,5 @@ AS
 	BEGIN
 		INSERT INTO [dbo].[User] (UserName, Email, Salt, PasswordHash)
 		VALUES (@UserName, @Email, @Salt, @PasswordHash)
-		RETURN 1
 	END
 RETURN 0

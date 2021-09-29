@@ -1,11 +1,11 @@
 ﻿using Blog.DataLibrary.Models;
 using System.Threading.Tasks;
 
-namespace Blog.DataLibrary.BusinessLogic
+namespace Blog.DataLibrary.BusinessLogic.Processors
 {
     public interface IAccountProcessor
     {
         Task<int> Create(string userName, string email, string salt, string passwordHash);
-        Task<User> LoadByEmail(string email);
+        Task<IAuthenticableUser> Load(string email);
     }
 }

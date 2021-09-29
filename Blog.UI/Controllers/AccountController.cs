@@ -1,4 +1,5 @@
 ﻿using Blog.DataLibrary.BusinessLogic;
+using Blog.DataLibrary.BusinessLogic.Processors;
 using Blog.UI.AuthorizationRequirements;
 using Blog.UI.Models.Account;
 using Microsoft.AspNetCore.Authentication;
@@ -16,19 +17,18 @@ namespace Blog.UI.Controllers
 {
     public class AccountController : Controller
     {
-
         private IAuthorizationService _authorizationService;
         private IAccountProcessor _accountProcessor;
-        private IPasswordHasher _passwordHasher;
+        private IAccountManager _accountManager;
 
         public AccountController(
             IAuthorizationService authorizationService,
             IAccountProcessor accountProcessor,
-            IPasswordHasher passwordHasher)
+            IAccountManager accountManager)
         {
             _authorizationService = authorizationService;
             _accountProcessor = accountProcessor;
-            _passwordHasher = passwordHasher;
+            _accountManager = accountManager;
         }
 
         public async Task<AuthorizationResult> AuthorizeAccountAccess(string accountUserName)
@@ -64,22 +64,15 @@ namespace Blog.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var salt = _passwordHasher.GetRandomSalt();
-                var passwordHash = _passwordHasher.GetHash(vm.Password, salt);
-
-                var result = await _accountProcessor.Create(
+                bool isSucceeded = await _accountManager.CreateAccount(
                     vm.UserName,
                     vm.Email,
-                    salt,
-                    passwordHash);
+                    vm.Password);
 
-                if (result == 1)
+                if (isSucceeded)
                 {
-                    return RedirectToAction("Login", new LoginViewModel 
-                    { 
-                        Email = vm.Email, 
-                        Password = vm.Password 
-                    });
+                    await _accountManager.SignInWithPassword(vm.Email, vm.Password);
+                    return RedirectToAction("Index", "Home");
                 }
             }
 
@@ -89,26 +82,9 @@ namespace Blog.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel vm, string redirectUrl="/")
         {
-            if (ModelState.IsValid && !User.Identity.IsAuthenticated)
+            if (ModelState.IsValid)
             {
-                var user = await _accountProcessor.LoadByEmail(vm.Email);
-                var passwordHash = _passwordHasher.GetHash(vm.Password, user.Salt);
-
-                if (user.PasswordHash.Trim() == passwordHash)
-                {
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, user.UserName),
-                        new Claim(ClaimTypes.Email, user.Email),
-                        new Claim(ClaimTypes.Role, "Admin")
-                    };
-
-                    var claimIdentity = new ClaimsIdentity(claims, "WEBSITE");
-
-                    var userPrincipal = new ClaimsPrincipal(new[] { claimIdentity });
-
-                    await HttpContext.SignInAsync(userPrincipal);
-                }
+                await _accountManager.SignInWithPassword(vm.Email, vm.Password);
             }
 
             return Redirect(redirectUrl);
@@ -117,10 +93,7 @@ namespace Blog.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout(string redirectUrl="/")
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                await HttpContext.SignOutAsync();
-            }
+            await _accountManager.SignOut();
 
             return Redirect(redirectUrl);
         }

@@ -5,10 +5,8 @@ using System.Text;
 
 namespace Blog.DataLibrary.Models.BlogItem.Post
 {
-    public class PostModel : IPostModel
+    public class Post : BlogItem, IPost
     {
-        public int Id { get; set; }
-        public string Title { get; set; }
         public string Body { get; set; }
     }
 }

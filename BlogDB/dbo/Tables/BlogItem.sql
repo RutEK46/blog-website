@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[BlogItem]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [Title] NVARCHAR(100) NOT NULL UNIQUE, 
+	[UserId] INT NOT NULL,
+    [Created] DATETIME NOT NULL,
+	CONSTRAINT [FK_Post_User_Id] FOREIGN KEY ([UserId]) REFERENCES [dbo].[User] ([Id])
+)

@@ -65,7 +65,22 @@
     <Build Include="dbo\Tables\Post.sql" />
     <Build Include="dbo\Tables\User.sql" />
     <Build Include="dbo\StoredProcedures\spUser_Insert.sql" />
-    <Build Include="dbo\StoredProcedures\spUser_LoadByEmail.sql" />
+    <Build Include="dbo\StoredProcedures\spUser_SelectByEmail.sql" />
+    <Build Include="dbo\StoredProcedures\spPost_Insert.sql" />
+    <Build Include="dbo\StoredProcedures\spPost_Select.sql" />
+    <Build Include="dbo\StoredProcedures\spPost_Update.sql" />
+    <Build Include="dbo\StoredProcedures\spPost_Delete.sql" />
+    <Build Include="dbo\StoredProcedures\spPost_SelectById.sql" />
+    <Build Include="dbo\StoredProcedures\spPost_SelectByTitle.sql" />
+    <Build Include="dbo\Tables\BlogItem.sql" />
+    <Build Include="dbo\StoredProcedures\spBlogItem_Select.sql" />
+    <Build Include="dbo\StoredProcedures\spBlogItem_Insert.sql" />
+    <Build Include="dbo\StoredProcedures\spBlogItem_InsertByUserName.sql" />
+    <Build Include="dbo\StoredProcedures\spBlogItem_SelectById.sql" />
+    <Build Include="dbo\StoredProcedures\spBlogItem_SelectByTitle.sql" />
+    <Build Include="dbo\StoredProcedures\spBlogItem_Update.sql" />
+    <Build Include="dbo\StoredProcedures\spBlogItem_Delete.sql" />
+    <Build Include="dbo\StoredProcedures\spPost_InsertByUserName.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PublishProfiles\BlogDB.publish.xml" />

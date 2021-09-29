@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Blog.DataLibrary.Models
 {
-    public class User
+    public class AuthenticableUser : IAuthenticableUser
     {
         public int Id { get; set; }
         public string UserName { get; set; }

@@ -1,4 +1,4 @@
-﻿using Blog.DataLibrary.BusinessLogic;
+﻿using Blog.DataLibrary.BusinessLogic.Processors;
 using Blog.UI.Models.Post;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +14,10 @@ namespace Blog.UI.Controllers
     {
         private IPostProcessor _postProcessor;
 
-        public PostController(IPostProcessor postProcessor)
+        public PostController(IPostProcessor postProcessor, IBlogItemProcessor b)
         {
             _postProcessor = postProcessor;
+            //b.Create("Hack", "Admin").GetAwaiter().GetResult();
         }
 
         [HttpGet]
@@ -50,7 +51,7 @@ namespace Blog.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _postProcessor.Create(vm.Title,vm.Body);
+                await _postProcessor.Create(vm.Title, User.Identity.Name, vm.Body);
                 return RedirectToAction("Index", "Home");
             }
 

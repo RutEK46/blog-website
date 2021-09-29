@@ -1,8 +1,10 @@
 using Blog.DataLibrary.BusinessLogic;
+using Blog.DataLibrary.BusinessLogic.Processors;
 using Blog.DataLibrary.DataAccess;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,8 +43,12 @@ namespace Blog.UI
 
             services.AddControllersWithViews();
 
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<ISqlDataAccess, SqlDataAccess>();
             services.AddTransient<IPasswordHasher, PasswordHasher>();
+            services.AddTransient<IAccountManager, AccountManager>();
+
+            services.AddTransient<IBlogItemProcessor, BlogItemProcessor>();
             services.AddTransient<IPostProcessor, PostProcessor>();
             services.AddTransient<IAccountProcessor, AccountProcessor>();
         }

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Post]
 (
-	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
-    [Title] NVARCHAR(100) NULL, 
-    [Body] NVARCHAR(MAX) NOT NULL
+	[Id] INT NOT NULL PRIMARY KEY,
+    [Body] NVARCHAR(MAX) NOT NULL,
+    CONSTRAINT [FK_Post_BlogItem_Id] FOREIGN KEY ([Id]) REFERENCES [dbo].[BlogItem] ([Id])
 )

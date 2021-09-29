@@ -8,5 +8,7 @@ namespace Blog.DataLibrary.Models.BlogItem
     {
         int Id { get; set; }
         string Title { get; set; }
+        IUser Creator { get; set; }
+        DateTime Created { get; set; }
     }
 }
