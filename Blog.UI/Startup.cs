@@ -1,11 +1,9 @@
-using Blog.DataLibrary.BusinessLogic;
-using Blog.DataLibrary.BusinessLogic.Processors;
-using Blog.DataLibrary.DataAccess;
-using Microsoft.AspNetCore.Authorization;
+using Blog.Database;
+using Blog.Domain.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,39 +16,31 @@ namespace Blog.UI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        private IConfiguration _config { get; }
 
-        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration config)
+        {
+            _config = config;
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication("CookieAuth")
-                .AddCookie("CookieAuth");
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(_config.GetConnectionString("Default")));
 
-            services.AddAuthorization(config =>
+            services.AddIdentity<User, Role>(options =>
             {
-                /*var defaultAuthBuilder = new AuthorizationPolicyBuilder();
-                var defaultAuthPolicy = defaultAuthBuilder
-                    .RequireAuthenticatedUser()
-                    .Build();
-
-                config.DefaultPolicy = defaultAuthPolicy;*/
-            });
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 8;
+            })
+                .AddEntityFrameworkStores<AppDbContext>();
 
             services.AddControllersWithViews();
 
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<ISqlDataAccess, SqlDataAccess>();
-            services.AddTransient<IPasswordHasher, PasswordHasher>();
-            services.AddTransient<IAccountManager, AccountManager>();
-
-            services.AddTransient<IBlogItemProcessor, BlogItemProcessor>();
-            services.AddTransient<IPostProcessor, PostProcessor>();
-            services.AddTransient<IAccountProcessor, AccountProcessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

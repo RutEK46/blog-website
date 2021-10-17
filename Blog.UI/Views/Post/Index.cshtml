@@ -6,8 +6,10 @@
 
 <h1>@Html.DisplayFor(model => model.Title)</h1>
 
-<div>
-    @Html.DisplayFor(model => model.Body)
+<div class="ql-container ql-snow">
+    <div class="ql-editor">
+        @Html.Raw(Model.Body)
+    </div>
 </div>
 
 @if (User.IsInRole("Admin"))

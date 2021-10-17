@@ -1,34 +1,27 @@
-﻿using Blog.DataLibrary.BusinessLogic;
-using Blog.DataLibrary.BusinessLogic.Processors;
+﻿using Blog.Domain.Models;
 using Blog.UI.AuthorizationRequirements;
 using Blog.UI.Models.Account;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace Blog.UI.Controllers
 {
     public class AccountController : Controller
     {
-        private IAuthorizationService _authorizationService;
-        private IAccountProcessor _accountProcessor;
-        private IAccountManager _accountManager;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
 
         public AccountController(
             IAuthorizationService authorizationService,
-            IAccountProcessor accountProcessor,
-            IAccountManager accountManager)
+            UserManager<User> userManager,
+            SignInManager<User> signInManager)
         {
             _authorizationService = authorizationService;
-            _accountProcessor = accountProcessor;
-            _accountManager = accountManager;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         public async Task<AuthorizationResult> AuthorizeAccountAccess(string accountUserName)
@@ -47,10 +40,10 @@ namespace Blog.UI.Controllers
         {
             if ((await AuthorizeAccountAccess(userName)).Succeeded)
             {
-
+                return View();
             }
 
-            return View();
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -64,14 +57,17 @@ namespace Blog.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool isSucceeded = await _accountManager.CreateAccount(
-                    vm.UserName,
-                    vm.Email,
-                    vm.Password);
-
-                if (isSucceeded)
+                var user = new User
                 {
-                    await _accountManager.SignInWithPassword(vm.Email, vm.Password);
+                    UserName = vm.UserName,
+                    Email = vm.Email
+                };
+
+                var result = await _userManager.CreateAsync(user, vm.Password);
+
+                if (result.Succeeded)
+                {
+                    await _signInManager.PasswordSignInAsync(user, vm.Password, false, false);
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -84,7 +80,11 @@ namespace Blog.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _accountManager.SignInWithPassword(vm.Email, vm.Password);
+                var user = await _userManager.FindByEmailAsync(vm.Email);
+                if (user != null)
+                {
+                    await _signInManager.PasswordSignInAsync(user, vm.Password, false, false);
+                }
             }
 
             return Redirect(redirectUrl);
@@ -93,7 +93,7 @@ namespace Blog.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout(string redirectUrl="/")
         {
-            await _accountManager.SignOut();
+            await _signInManager.SignOutAsync();
 
             return Redirect(redirectUrl);
         }

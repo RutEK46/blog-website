@@ -1,6 +1,8 @@
-﻿using Blog.DataLibrary.BusinessLogic.Processors;
+﻿using Blog.Database;
+using Blog.Domain.Models;
 using Blog.UI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,19 +15,19 @@ namespace Blog.UI.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IBlogItemProcessor _blogItemProcessor;
+        private readonly AppDbContext _ctx;
 
         public HomeController(
             ILogger<HomeController> logger,
-            IBlogItemProcessor blogItemProcessor)
+            AppDbContext ctx)
         {
             _logger = logger;
-            _blogItemProcessor = blogItemProcessor;
+            _ctx = ctx;
         }
 
         public async Task<IActionResult> Index()
         {
-            var model = (await _blogItemProcessor.Load()).ToList();
+            var model = await _ctx.BlogItems.ToListAsync();
             
             return View(model);
         }

@@ -25,7 +25,7 @@ namespace Blog.UI.AuthorizationRequirements
         {
             var user = context.User;
 
-            if (isAccountUser(user, requirement) || isAdmin(user))
+            if (isAccountUser(user, requirement.AccountUserName) || isAdmin(user))
             {
                 context.Succeed(requirement);
             }
@@ -33,11 +33,11 @@ namespace Blog.UI.AuthorizationRequirements
             return Task.CompletedTask;
         }
 
-        public bool isAccountUser(ClaimsPrincipal user, AccountAccessRequirement requirement)
-            => user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name && x.Value == requirement.AccountUserName) != null;
+        public bool isAccountUser(ClaimsPrincipal user, string accountUserName)
+            => user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name && x.Value == accountUserName) != null;
 
         public bool isAdmin(ClaimsPrincipal user)
-            =>  user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role && x.Value == "Admin") != null;
+            => user.IsInRole("Admin");
     }
 
     public static class AuthorizationPolicyBuilderExtensions

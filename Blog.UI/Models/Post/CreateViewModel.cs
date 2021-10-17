@@ -10,6 +10,7 @@ namespace Blog.UI.Models.Post
     {
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "The post needs to have a title.")]
         public string Title { get; set; }
 
         [Required(ErrorMessage = "The post needs to have a body.")]
